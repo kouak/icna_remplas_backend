@@ -1,6 +1,6 @@
 var _ = require('lodash'),
     bookshelf = require('bookshelf'),
-    knex = require('knex')('../../database/knexfile.js'),
+    knex = require('knex')(require('../../database/knexfile.js').development),
 
     icnaBookshelf;
 

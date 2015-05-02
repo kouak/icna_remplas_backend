@@ -4,9 +4,17 @@ routes = function() {
   
   var router = express.Router();
   
-  router.get('/caca', function(req, res) {
-    res.send({caca: 'pouet'});
-  });
+  // Load our API
+  var api = require('./api');
+
+  // Load Auth specific stuff
+  var auth = require('./auth');
+
+  // Load our API
+  router.use('/api', api);
+
+  // Auth
+  router.use('/auth', auth);
 
   return router;
 };

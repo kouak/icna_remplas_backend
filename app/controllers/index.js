@@ -6,9 +6,9 @@
 
 var _ = require('lodash');
 
-models = {
+controllers = {
 
-  modelsToLoad: ['user'],
+  controllersToLoad: ['users', 'auth'],
   /**
    * Init
    * require each model and cache into the "models" object
@@ -16,11 +16,15 @@ models = {
   init: function() {
     var self = this;
     
-    return _.each(self.modelsToLoad, function(modelFile) {
-      var file = require('./' + modelFile);
-      _.extend(self, file);
+    return _.each(self.controllersToLoad, function(controllerFile) {
+      var file = require('./' + controllerFile);
+      var o = {};
+      o[controllerFile] = file;
+      _.extend(self, o);
     });
   }
 }
 
-module.exports = models;
+// Load everything
+controllers.init();
+module.exports = controllers;
