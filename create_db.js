@@ -1,5 +1,5 @@
 
-var Schema = require('./app/models/schema');
+var Schema = require('./app/schema');
 var Promise = require('bluebird');
 var _ = require('lodash');
 
