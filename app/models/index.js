@@ -16,10 +16,6 @@ models = {
   init: function() {
     var self = this;
     
-    var schema = require('./schema');
-    schema.init();
-    self.schema = schema;
-
     return _.each(self.modelsToLoad, function(modelFile) {
       var file = require('./' + modelFile);
       _.extend(self, file);
