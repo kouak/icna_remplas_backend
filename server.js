@@ -10,13 +10,10 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
 // Database initialization
-var dbConfig = require('./app/config').dbConfig;
-var models = require('./app/models');
 
 // Load routes
 var routes = require('./app/routes');
 
-models.init();
 
 var app = express();
 
@@ -31,6 +28,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'frontend')));
 
 app.use('/', routes);
+
+app.set('view engine', 'jade');
+app.set('views', path.join(__dirname, 'app/views'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

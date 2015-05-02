@@ -1,10 +1,9 @@
 var _ = require('lodash'),
     bookshelf = require('bookshelf'),
-    knex = require('knex'),
-    config = require('../config'),
+    knex = require('knex')('../../database/knexfile.js'),
 
     icnaBookshelf;
 
-icnaBookshelf = bookshelf(knex(config.dbConfig));
+icnaBookshelf = bookshelf(knex);
 
 module.exports = icnaBookshelf;
