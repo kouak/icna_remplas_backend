@@ -2,11 +2,11 @@ var _ = require('lodash'),
     myBs = require(__dirname + '/db'), // Our Bookshelf Instance
     ModelBase = require('bookshelf-modelbase')(myBs), // Bookshelf-base model
 
-    User;
+    Center;
 
-User = ModelBase.extend({
-  tableName: 'users'
+Center = ModelBase.extend({
+  tableName: 'centers'
 });
 
-module.exports = User;
+module.exports = Center;
 

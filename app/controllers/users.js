@@ -4,8 +4,7 @@
  * https://github.com/TryGhost/Ghost/blob/master/core/server/models/index.js
  */
 
-var User        = require('../models/user.js').User,
-    Users       = require('../models/user.js').Users;
+var User        = require('../models/user.js');
 
 var usersController = {
   findOne: function(req, res) {
