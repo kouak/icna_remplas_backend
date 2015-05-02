@@ -1,10 +1,11 @@
 
-var config = require('./app/config');
-var knex = require('knex')(config.dbConfig);
-
 var Schema = require('./app/models/schema');
 var Promise = require('bluebird');
 var _ = require('lodash');
+
+var icnaBookshelf = require('./app/models/base');
+
+var knex = icnaBookshelf.knex;
 
 function createTable(tableName) {
   console.log('Creating', tableName);
