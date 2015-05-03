@@ -11,6 +11,10 @@ routes = function() {
 
   router.get('/users', c.users.find);
   router.get('/user/:id', c.users.findOne); 
+  
+  // Centers
+  router.get('/centers', c.centers.find);
+  router.get('/center/:id', c.centers.findOne);
 
   return router;
 };
