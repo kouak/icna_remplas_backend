@@ -17,6 +17,20 @@ module.exports = {
     }
   },
 
+  test: {
+    client: 'sqlite3',
+    connection: {
+      filename: __dirname + '/dev.sqlite3.test'
+    },
+    migrations: {
+      directory: __dirname + '/migrations',
+      tableName: 'knex_migrations'
+    },
+    seeds: {
+      directory: __dirname + '/seeds'
+    }
+  },
+
   production: {
     client: 'postgresql',
     connection: {
