@@ -1,6 +1,7 @@
 var should = require('should');
 var initDb = require(__dirname + '/../initDb');
 var appSettings = require(__dirname + '/../settings');
+var knex = initDb.knex;
 
 describe('User model', function() {
   var User = require(appSettings.ROOTDIR + '/app/models/user');
@@ -12,12 +13,13 @@ describe('User model', function() {
   });
 
   describe('loaded', function() {
-    before(initDb.before); // Init db
+    before(function(done) {
+      knex('users').truncate().then(function() { done(); });
+    }); // Init db
 
     describe('saving', function() {
       it('should save with proper values', function(done) {
         var u = {
-          id: 123,
           name: 'bla',
           first_name: 'blabla',
           email: 'a@a.com',
@@ -25,8 +27,12 @@ describe('User model', function() {
           team_id: 2
         };
 
-        User.forge(u).save().finally(function(err) {console.log(err); done(); });
+        (User.forge(u).save().finally(function(err) {
+          if(err) throw err;
+          done();
+        })).should.not.throw();
 
+        
       });
     });
   });
