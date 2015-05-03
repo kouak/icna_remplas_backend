@@ -1,9 +1,22 @@
 var _ = require('lodash'),
     bookshelf = require('bookshelf'),
-    knex = require('knex')(require('../../database/knexfile.js').development),
 
     icnaBookshelf;
 
+
+
+function knexfile() {
+  var def = 'development';
+
+  var knexfile = require('../../database/knexfile.js');
+  
+  var env = process.env.NODE_ENV || def;
+
+  return knexfile[env.toLowerCase()] || knexfile[def];
+}
+
+
+knex = require('knex')(knexfile());
 icnaBookshelf = bookshelf(knex);
 
 module.exports = icnaBookshelf;
