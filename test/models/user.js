@@ -1,10 +1,12 @@
 var should = require('should');
+var shouldPromised = require('should-promised');
+
 var initDb = require(__dirname + '/../initDb');
 var appSettings = require(__dirname + '/../settings');
 var knex = initDb.knex;
+var User = require(appSettings.ROOTDIR + '/app/models/user');
 
 describe('User model', function() {
-  var User = require(appSettings.ROOTDIR + '/app/models/user');
 
 
   it('should load', function(done) {
@@ -13,26 +15,36 @@ describe('User model', function() {
   });
 
   describe('loaded', function() {
-    before(function(done) {
-      knex('users').truncate().then(function() { done(); });
-    }); // Init db
 
     describe('saving', function() {
-      it('should save with proper values', function(done) {
+
+      beforeEach(function(done) {
+        knex('users').truncate().then(function() { done(); });
+      }); // Init db
+
+      it('should save with proper values', function() {
         var u = {
           name: 'bla',
-          first_name: 'blabla',
+          firstName: 'blabla',
           email: 'a@a.com',
           password: '123456',
-          team_id: 2
+          teamId: 2
         };
 
-        (User.forge(u).save().finally(function(err) {
-          if(err) throw err;
-          done();
-        })).should.not.throw();
+        return User.forge(u).save().then(function(user) { return user.id.should.eql(1); });
+      });
+
+      it('should reject saving with improper values', function() {
+        var u = {
+          name : 'bla',
+          firstName: 'blabla',
+          email: 'a',
+          password: '123456',
+          teamId: 2
+        };
 
         
+        return User.forge(u).save().should.be.rejectedWith(/ValidationError/);
       });
     });
   });
