@@ -165,6 +165,8 @@ User = ModelBase.extend({
     // Set hashed password and save
     .then(function(hashed) {
       var user = this.user;
+      user.set('resetPasswordToken', ''); // Consume token
+      user.set('resetPasswordExpires', new Date(0));
       return user.set('password', hashed).save();
     });
   }

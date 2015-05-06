@@ -100,14 +100,18 @@ describe('User lost password', function() {
           return User.updatePasswordViaResetToken(validToken, '').should.be.rejectedWith(/ValidationError/);
         });
 
-        it('should update password for given user', function() {
+        it('should update password for given user and consume the token', function() {
           var newPassword = '654321';
           return Promise.try(function() { 
             return User.updatePasswordViaResetToken(validToken, newPassword).should.be.fulfilled;
           }).then(function() {
             return User.findOne({email: validUser.email});
           }).then(function(user) {
-            return user.comparePassword(newPassword).should.finally.eql(true);
+            return [
+              user.comparePassword(newPassword).should.finally.eql(true),
+              user.get('resetPasswordToken').should.eql(''),
+              user.get('resetPasswordExpires').should.eql(0)
+            ];
           });
         });
 
