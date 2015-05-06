@@ -138,7 +138,37 @@ User = ModelBase.extend({
       // Return save promise
       return this.user.save();
     });
+  },
+
+  updatePasswordViaResetToken: function(token, newPassword) {
+    var self = this;
+    var validation = Joi.validate({password: newPassword}, (new User).validate); // Access prototype from class methods
+    if(validation.error) {
+      return Promise.reject(new Error(validation.error));
+    }
+
+    return self.findOne({resetPasswordToken: token})
+    .bind({})
+    .then(function(user) {
+      if(_.isEmpty(user)) {
+        console.log('User not found with this token');
+        return Promise.reject(new self.NotFoundError('not found'));
+      }
+      this.user = user;
+      return Promise.resolve();
+    })
+    // Encrypt new password
+    .then(function() {
+      var user = this.user;
+      return user.hashPassword(newPassword);
+    })
+    // Set hashed password and save
+    .then(function(hashed) {
+      var user = this.user;
+      return user.set('password', hashed).save();
+    });
   }
+
 });
 
 module.exports = myBs.model('User', User);

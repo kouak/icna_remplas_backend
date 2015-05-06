@@ -78,5 +78,40 @@ describe('User lost password', function() {
         });
       });
     });
+
+    describe('updatePasswordViaResetToken', function() {
+      it('should throw an error with invalid token', function() {
+        return User.updatePasswordViaResetToken('invalidtoken', '123456').should.be.rejectedWith(/not found/);
+      });
+
+      describe('given user with request token', function() {
+        var validToken;
+
+        beforeEach(function(done) {
+          Promise.try(function() {
+            return User.requestResetToken({email: validUser.email});
+          }).then(function(user) {
+            validToken = user.get('resetPasswordToken');
+            done();
+          });
+        });
+
+        it('should throw an error with invalid password', function() {
+          return User.updatePasswordViaResetToken(validToken, '').should.be.rejectedWith(/ValidationError/);
+        });
+
+        it('should update password for given user', function() {
+          var newPassword = '654321';
+          return Promise.try(function() { 
+            return User.updatePasswordViaResetToken(validToken, newPassword).should.be.fulfilled;
+          }).then(function() {
+            return User.findOne({email: validUser.email});
+          }).then(function(user) {
+            return user.comparePassword(newPassword).should.finally.eql(true);
+          });
+        });
+
+      });
+    });
   });
 });
