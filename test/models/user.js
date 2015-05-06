@@ -5,7 +5,6 @@ var initDb = require(__dirname + '/../initDb');
 var appSettings = require(__dirname + '/../settings');
 var knex = initDb.knex;
 var User = require(appSettings.ROOTDIR + '/app/models/user');
-var Team = require(appSettings.ROOTDIR + '/app/models/team');
 
 var Promise = require('bluebird');
 
