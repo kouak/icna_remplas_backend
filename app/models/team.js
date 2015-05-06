@@ -8,5 +8,6 @@ Team = ModelBase.extend({
   tableName: 'teams'
 });
 
-module.exports = Team;
+
+module.exports = myBs.model('Team', Team);
 

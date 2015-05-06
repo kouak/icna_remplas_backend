@@ -19,4 +19,6 @@ function knexfile() {
 knex = require('knex')(knexfile());
 icnaBookshelf = bookshelf(knex);
 
+icnaBookshelf.plugin('registry');
+
 module.exports = icnaBookshelf;
