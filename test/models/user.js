@@ -35,6 +35,13 @@ describe('User model', function() {
         });
       }); // Init db
 
+      afterEach(function(done) {
+        Promise.all([
+          knex('users').truncate(),
+          knex('teams').truncate()
+        ]).then(function() { done(); });
+      });
+
       it('should save with proper values', function() {
         var u = {
           name: 'bla',

@@ -6,6 +6,7 @@ var ModelBase = require('bookshelf-modelbase')(myBs), // Bookshelf-base model
     Joi = require('joi'),
     Promise = require('bluebird'),
     bcrypt = Promise.promisifyAll(require('bcrypt')),
+    crypto = Promise.promisifyAll(require('crypto')),
 
     User;
 
@@ -108,7 +109,36 @@ User = ModelBase.extend({
       });
   }
 }, {
+  /* Request a password token
+   * options.email must be set
+   */
+  requestResetToken: function(options) {
+    var self = this;
+    var options = _.extend({}, options);
+    // Not email supplied, throw error
+    if(options.email === undefined) { return Promise.reject(new Error('Please supply a valid email')); }
 
+    // Find user with supplied email
+    return self.findOne({email: options.email})
+    .bind({})
+    .then(function(user) {
+      this.user = user; // Bind user to the promise chain
+      // User not found, raise error
+      if(_.isEmpty(user)) { return Promise.reject(new self.NotFoundError('not found')); }
+    })
+    // Generate token
+    .then(function() {
+      return crypto.randomBytesAsync(32);
+    })
+    .then(function(token) {
+      // Set token expiry date
+      this.user.set('resetPasswordExpires', new Date(Date.now() + 1000*3600*24*2)); // expires 2 days from now
+      this.user.set('resetPasswordToken', token.toString('base64'));
+
+      // Return save promise
+      return this.user.save();
+    });
+  }
 });
 
 module.exports = myBs.model('User', User);
