@@ -82,6 +82,49 @@ describe('User model', function() {
 
     });
     
+    describe('given a proper user in database', function() {
+      var u = {
+        name: 'bla',
+        firstName: 'blabla',
+        email: 'a@a.com',
+        password: '123456',
+        teamId: 2
+      };
+
+      before(function(done) {
+        Promise.try(function() {
+          return knex('teams').truncate();
+        })
+        .then(function() {
+          return knex('teams').insert({id: 2, name: 'team', center_id: 1});
+        })
+        .then(function() {
+          return User.forge(u).save();
+        })
+        .then(function() { done(); });
+      });
+
+      after(function(done) {
+        Promise.try(function() {
+          return knex('teams').truncate();
+        })
+        .then(function() {
+          return knex('users').truncate();
+        })
+        .then(function() {
+          done();
+        });
+      });
+
+      it('should not have a password field in json', function() {
+        return User.findOne({email: u.email})
+          .then(function(user) {
+            console.log(user.toJSON());
+            return user.toJSON().should.not.have.properties('password');
+          });
+      });
+
+    });
     describe('password', function() {
       var u = {
         name: 'bla',
