@@ -119,8 +119,19 @@ describe('User model', function() {
       it('should not have a password field in json', function() {
         return User.findOne({email: u.email})
           .then(function(user) {
-            console.log(user.toJSON());
             return user.toJSON().should.not.have.properties('password');
+          });
+      });
+
+      it('should not have a resetPasswordToken field in json', function() {
+        return User.findOne({email: u.email})
+          .then(function(user) {
+            return [
+              user.toJSON().should.not.have.properties('resetPasswordToken'),
+              user.toJSON().should.not.have.properties('resetPasswordExpires'),
+              user.toJSON({showResetToken: true}).should.have.properties('resetPasswordToken'),
+              user.toJSON({showResetToken: true}).should.have.properties('resetPasswordExpires')
+            ];
           });
       });
 

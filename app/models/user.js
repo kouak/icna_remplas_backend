@@ -35,6 +35,7 @@ User = ModelBase.extend({
     resetPasswordExpires: Joi.date().optional()
   },
 
+  /* Team association */
   team: function() {
     return this.belongsTo('Team');
   },
@@ -57,6 +58,22 @@ User = ModelBase.extend({
     });
   },
 
+  /* toJSON */
+  toJSON: function(options) {
+    // Defaults to showResetToken: false
+    var options = _.extend({showResetToken: false}, options);
+
+    var attrs = ModelBase.prototype.toJSON.call(this, options);
+
+    delete attrs.password;
+
+    if(!options.showResetToken) {
+      delete attrs.resetPasswordToken;
+      delete attrs.resetPasswordExpires;
+    }
+
+    return attrs;
+  },
   encryptPassword: function() { // Called before create, encrypt 'password' field
     var self = this;
     if(!self.isNew) { return Promise.reject(new Error('should never happen')); }
