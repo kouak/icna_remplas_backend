@@ -8,7 +8,12 @@ var _ = require('lodash');
 
 controllers = {
 
-  controllersToLoad: ['centers', 'users', 'auth'],
+  controllersToLoad: [
+    'centers',
+    'users',
+    'auth',
+    'teams'
+  ],
   /**
    * Init
    * require each model and cache into the "models" object

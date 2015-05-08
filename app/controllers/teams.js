@@ -1,10 +1,6 @@
-/**
- * Load models
- * Courtesy of the Ghost project
- * https://github.com/TryGhost/Ghost/blob/master/core/server/models/index.js
- */
-
+var _           = require('lodash');
 var Team        = require('../models/team.js');
+var Promise     = require('bluebird');
 
 var teamsController = {
   findOne: function(req, res) {
@@ -12,10 +8,18 @@ var teamsController = {
   },
   
   find: function(req, res) {
+    var filter = {};
+    if(req.query.center) {
+      filter = { center_id: req.query.center };
+    }
     Team
+    .where(filter)
     .fetchAll()
     .then(function(teams) {
       res.send(teams);
+    })
+    .catch(function(err) {
+      res.send(JSON.stringify(err, ['message', 'arguments', 'type', 'name']));
     });
   }
 };

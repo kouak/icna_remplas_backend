@@ -16,6 +16,9 @@ routes = function() {
   router.get('/centers', c.centers.find);
   router.get('/center/:id', c.centers.findOne);
 
+  // Teams 
+  router.get('/teams', c.teams.find);
+  router.get('/team/:id', c.teams.findOne);
   return router;
 };
 
