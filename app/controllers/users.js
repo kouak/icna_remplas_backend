@@ -5,6 +5,7 @@
  */
 
 var User        = require('../models/user.js');
+var _           = require('lodash');
 
 var usersController = {
   findOne: function(req, res) {
@@ -16,6 +17,29 @@ var usersController = {
     .fetchAll()
     .then(function(users) {
       res.send(users);
+    });
+  },
+
+  create: function(req, res) {
+    var allowedKeys = [
+      'name',
+      'firstName',
+      'phone',
+      'email',
+      'password',
+      'teamId'
+    ];
+
+    var userData = _.pick(req.params, allowedKeys);
+
+    User
+    .forge(userData)
+    .save()
+    .then(function(user) {
+      res.send(user);
+    })
+    .catch(function(err) {
+      res.send(JSON.stringify(err, ['message', 'arguments', 'type', 'name']));
     });
   }
 };

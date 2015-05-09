@@ -9,6 +9,10 @@ routes = function() {
   
   var router = express.Router();
 
+
+  // Create a user
+  router.post('/register', c.users.create);
+
   // Request a new password token
   router.post('/reset', c.auth.createReset);
 
