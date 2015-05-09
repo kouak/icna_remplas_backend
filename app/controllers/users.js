@@ -1,9 +1,3 @@
-/**
- * Load models
- * Courtesy of the Ghost project
- * https://github.com/TryGhost/Ghost/blob/master/core/server/models/index.js
- */
-
 var User        = require('../models/user.js');
 var _           = require('lodash');
 
@@ -30,7 +24,7 @@ var usersController = {
       'teamId'
     ];
 
-    var userData = _.pick(req.params, allowedKeys);
+    var userData = _.pick(req.body, allowedKeys);
 
     User
     .forge(userData)
