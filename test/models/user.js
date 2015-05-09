@@ -1,6 +1,8 @@
 var should = require('should');
 var shouldPromised = require('should-promised');
 
+var _ = require('lodash');
+
 var initDb = require(__dirname + '/../initDb');
 var appSettings = require(__dirname + '/../settings');
 var knex = initDb.knex;
@@ -121,6 +123,16 @@ describe('User model', function() {
         .then(function() {
           done();
         });
+      });
+
+      it('should reject registration of duplicate email', function() {
+        var u1 = _.clone(u);
+        var u2 = _.clone(u);
+        u2.email = 'A@A.COM';
+        return Promise.all([
+          User.forge(u1).save().should.be.rejectedWith(/ValidationError.*duplicate/),
+          User.forge(u2).save().should.be.rejectedWith(/ValidationError.*duplicate/)
+        ]);
       });
 
       it('should not have a password field in json', function() {
