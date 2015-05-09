@@ -1,6 +1,6 @@
 var _ = require('lodash'),
     myBs = require(__dirname + '/db'), // Our Bookshelf Instance
-    ModelBase = require('bookshelf-modelbase')(myBs), // Bookshelf-base model
+    ModelBase = require('./base')(myBs), // Bookshelf-base model
 
     Center;
 

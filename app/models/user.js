@@ -2,7 +2,7 @@ var _ = require('lodash'),
     myBs = require(__dirname + '/db'); // Our Bookshelf Instance
 
 
-var ModelBase = require('bookshelf-modelbase')(myBs), // Bookshelf-base model
+var ModelBase = require('./base')(myBs), // Bookshelf-base model
     Joi = require('joi'),
     Promise = require('bluebird'),
     bcrypt = Promise.promisifyAll(require('bcrypt')),
@@ -22,17 +22,28 @@ User = ModelBase.extend({
   },
 
   /* Validation with Joi */
-  validate: {
-    firstName: Joi.string(),
-    name: Joi.string(),
+  validation: {
+    firstName: Joi.string().min(1),
+    name: Joi.string().min(1),
     email: Joi.string().email(),
-    password: Joi.string(),
-    newPassword: Joi.string().optional(),
+    password: Joi.string().min(6),
     teamId: Joi.number().integer(),
-    balance: Joi.number().integer().optional(),
-    lastLogin: Joi.date().optional(),
-    resetPasswordToken: Joi.any().optional().strict(false),
-    resetPasswordExpires: Joi.date().optional()
+    balance: Joi.number().integer(),
+    lastLogin: Joi.date(),
+    resetPasswordToken: Joi.any().strict(false),
+    resetPasswordExpires: Joi.date()
+  },
+
+  validationCreate: {
+    firstName: Joi.any().required(),
+    name: Joi.any().required(),
+    email: Joi.any().required(),
+    password: Joi.any().required(),
+    teamId: Joi.any().required()
+  },
+
+  validationUpdate: {
+    id: Joi.number().integer()
   },
 
   /* Team association */
@@ -89,7 +100,7 @@ User = ModelBase.extend({
     
 
     /* Validate 'newPassword' with 'password' validation rules */
-    var validation = Joi.validate({password: newPassword}, this.validate);
+    var validation = Joi.validate({password: newPassword}, this.validation);
 
     if(validation.error) {
       return Promise.reject(new Error(validation.error));
@@ -159,7 +170,7 @@ User = ModelBase.extend({
 
   updatePasswordViaResetToken: function(token, newPassword) {
     var self = this;
-    var validation = Joi.validate({password: newPassword}, (new User).validate); // Access prototype from class methods
+    var validation = Joi.validate({password: newPassword}, (new User).validation); // Access prototype from class methods
     if(validation.error) {
       return Promise.reject(new Error(validation.error));
     }

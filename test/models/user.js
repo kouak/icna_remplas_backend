@@ -63,8 +63,15 @@ describe('User model', function() {
           teamId: 2
         };
 
+        var u2 = {
+          name: 'bla'
+        };
         
-        return User.forge(u).save().should.be.rejectedWith(/ValidationError/);
+        return Promise.all([
+          User.forge(u).save().should.be.rejectedWith(/ValidationError/),
+          User.forge(u2).save().should.be.rejectedWith(/ValidationError/),
+          true
+        ]);
       });
 
       it('should reject saving with invalid teamid', function() {
@@ -197,7 +204,10 @@ describe('User model', function() {
 
       it('should reject password change with invalid new password', function() {
         return User.findOne({email: u.email}).then(function(user) {
-          return user.changePassword(u.password, '').should.be.rejectedWith(/ValidationError/);
+          return Promise.all([
+            user.changePassword(u.password, 'shrt').should.be.rejectedWith(/ValidationError.*password/),
+            user.changePassword(u.password, '').should.be.rejectedWith(/ValidationError.*password/)
+          ]);
         });
       });
 
