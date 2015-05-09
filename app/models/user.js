@@ -17,8 +17,12 @@ User = ModelBase.extend({
 
   initialize: function() {
     ModelBase.prototype.initialize.call(this); // Call ModelBase initialize
+    // Encrypt Password
     this.on('creating', this.encryptPassword);
+    // Validate existence of team parent
     this.on('saving', this.validateTeamAssociation);
+    // Validate uniqueness of email
+    this.on('saving', this.validateEmailUniqueness);
   },
 
   /* Validation with Joi */
@@ -66,6 +70,27 @@ User = ModelBase.extend({
         return Promise.reject(new Error(validation.error));
       }
       return self;
+    });
+  },
+
+  /* Email uniqueness */
+  validateEmailUniqueness: function() {
+    var self = this;
+    
+    if(!self.get('email')) { return self; } // No email set, nothing to see here
+    if(!self.hasChanged('email')) { return self; } // Our email hasn't changed, don't query
+
+    self.set('email', self.get('email').toLowerCase()); // lower case the email
+    
+
+    return User.findOne({email: self.get('email')})
+    .then(function(user) {
+      // No user found
+      if(!user) {
+        return self;
+      }
+      /* User exists, invalidate email field */
+      return Promise.reject(new Error('ValidationError: Email "' + self.get('email') + '" already taken'));
     });
   },
 

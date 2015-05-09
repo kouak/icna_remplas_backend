@@ -70,8 +70,8 @@ describe('User model', function() {
         };
         
         return Promise.all([
-          User.forge(u).save().should.be.rejectedWith(/ValidationError/),
-          User.forge(u2).save().should.be.rejectedWith(/ValidationError/),
+          User.forge(u).save().should.be.rejectedWith(/ValidationError.*email/),
+          User.forge(u2).save().should.be.rejectedWith(/ValidationError.*firstName/),
           true
         ]);
       });
@@ -85,7 +85,7 @@ describe('User model', function() {
           teamId: 4
         };
         
-        return User.forge(u).save().should.be.rejectedWith(/ValidationError/);
+        return User.forge(u).save().should.be.rejectedWith(/ValidationError.*team/);
 
       });
 
@@ -130,8 +130,8 @@ describe('User model', function() {
         var u2 = _.clone(u);
         u2.email = 'A@A.COM';
         return Promise.all([
-          User.forge(u1).save().should.be.rejectedWith(/ValidationError.*duplicate/),
-          User.forge(u2).save().should.be.rejectedWith(/ValidationError.*duplicate/)
+          User.forge(u1).save().should.be.rejectedWith(/ValidationError.*Email.*taken/),
+          User.forge(u2).save().should.be.rejectedWith(/ValidationError.*Email.*taken/)
         ]);
       });
 
