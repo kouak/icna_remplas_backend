@@ -85,7 +85,7 @@ describe('User model', function() {
           teamId: 4
         };
         
-        return User.forge(u).save().should.be.rejectedWith(/ValidationError.*team/);
+        return User.forge(u).save().should.be.rejectedWith(/ValidationError.*Team/);
 
       });
 

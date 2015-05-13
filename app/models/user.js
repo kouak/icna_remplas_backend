@@ -67,7 +67,7 @@ User = ModelBase.extend({
       var validation = Joi.validate({team: team}, {team: Joi.object()});
       
       if(validation.error) {
-        return Promise.reject(new Error(validation.error));
+        return Promise.reject(new Error('ValidationError: Team doesn\'t exist'));
       }
       return self;
     });
@@ -90,7 +90,7 @@ User = ModelBase.extend({
         return self;
       }
       /* User exists, invalidate email field */
-      return Promise.reject(new Error('ValidationError: Email "' + self.get('email') + '" already taken'));
+      return Promise.reject(new Error('ValidationError: Email "' + self.get('email') + '" is already taken'));
     });
   },
 
