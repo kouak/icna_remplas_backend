@@ -18,15 +18,12 @@ describe('center model', function() {
     }); // Init db
 
     describe('saving', function() {
-      it('should save with proper values', function(done) {
+      it('should save with proper values', function() {
         var c = {
           name: 'bla'
         };
 
-        (Center.forge(c).save()
-        .finally(function() { done(); }))
-        .should.not.throw();
-
+        return Center.forge(c).save().should.be.fulfilled;
       });
     });
   });
