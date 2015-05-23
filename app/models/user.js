@@ -35,7 +35,9 @@ User = ModelBase.extend({
     balance: Joi.number().integer(),
     lastLogin: Joi.date(),
     resetPasswordToken: Joi.any().strict(false),
-    resetPasswordExpires: Joi.date()
+    resetPasswordExpires: Joi.date(),
+    loginToken: Joi.any().strict(false),
+    loginTokenExpires: Joi.date()
   },
 
   validationCreate: {
