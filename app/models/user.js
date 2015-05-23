@@ -10,6 +10,11 @@ var ModelBase = require('./base')(myBs), // Bookshelf-base model
 
     User;
 
+// Token constants
+// These need to be set somewhere in configuration
+var TOKEN_EXPIRY = 1000*60*60*24*7; // A week
+var TOKEN_SECRET = 'azertyuiop';
+
 myBs.plugin('virtuals');
 
 User = ModelBase.extend({
@@ -224,6 +229,14 @@ User = ModelBase.extend({
       user.set('resetPasswordExpires', new Date(0));
       return user.set('password', hashed).save();
     });
+  },
+
+  getJwtSecret: function() {
+    return TOKEN_SECRET;
+  },
+
+  getJwtExpiry: function() {
+    return new Date(Date.now() + TOKEN_EXPIRY);
   }
 
 });
