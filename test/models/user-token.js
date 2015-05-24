@@ -72,10 +72,9 @@ describe('User login token', function() {
       }).then(function() { done(); });
     });
 
-    describe('createLoginToken', function() {
-      it('should create a valid token', function() {
-      
-
+    it('should create a valid token', function() {
+      return Promise.try(function() {
+        return true;
       });
     });
   });
