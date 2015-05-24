@@ -85,8 +85,17 @@ describe('User login token', function() {
     it('should create a signed token', function() {
       return savedUser.issueToken().then(function(token) {
         return [
-          (function() { jwt.verify(token, 'INVALID') }).should.throw(/invalid/),
-          (function() { jwt.verify(token, User.getJwtSecret()) }).should.not.throw
+          (function() { jwt.verify(token, 'INVALID'); }).should.throw(/invalid/),
+          (function() { jwt.verify(token, User.getJwtSecret()); }).should.not.throw
+        ];
+      });
+    });
+
+    it('should verify a valid token', function() {
+      return savedUser.issueToken().then(function(token) {
+        return [
+          (function() { User.checkTokenValidity(); }).should.throw(/must pass a token/),
+          (function() { User.checkTokenValidity(token); }).should.not.throw
         ];
       });
     });
@@ -98,6 +107,20 @@ describe('User login token', function() {
           t.should.have.property('userId'),
           t.userId.should.eql(savedUser.get('id'))
         ];
+      });
+    });
+
+    it('should find the correct user given a token', function() {
+      return savedUser.issueToken().then(function(t) {
+        return User.findByToken(t).then(function(user) {
+          return user.get('id').should.eql(savedUser.get('id'));
+        });
+      });
+    });
+
+    it('should throw an error given an expired token', function() {
+      return savedUser.issueToken(-10).then(function(t) { // Issue an already expired token
+        return (function() { User.findByToken(t); }).should.throw(/expired/);
       });
     });
   });

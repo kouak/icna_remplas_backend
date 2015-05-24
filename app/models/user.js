@@ -129,7 +129,7 @@ User = ModelBase.extend({
 
 
   // Return a signed token
-  issueToken: Promise.method(function() {
+  issueToken: Promise.method(function(expirationInSeconds) {
     var self = this;
     if(!self.get('id')) { return Promise.reject(new Error('can\'t issue a token for a non-saved user')); }
 
@@ -138,7 +138,7 @@ User = ModelBase.extend({
     };
 
     var options = {
-      expiresInSeconds: TOKEN_EXPIRY_IN_SECONDS
+      expiresInSeconds: expirationInSeconds || TOKEN_EXPIRY_IN_SECONDS
     };
 
     return jwt.sign(payload, TOKEN_SECRET, options); 
@@ -255,8 +255,18 @@ User = ModelBase.extend({
 
   checkTokenValidity: function(token) {
     var self = this;
-    if(!token) { throw new Error('must pass a token') }
+    if(!token) { throw new Error('must pass a token'); }
     return jwt.verify(token, self.getJwtSecret());
+  },
+
+  findByToken: function(token) {
+    var self = this;
+    // Validate and get token
+    var t = self.checkTokenValidity(token);
+    // Invalid token
+    if(!t || !t.userId) { throw new Error('invalid token'); }
+
+    return self.findOne({id: t.userId});
   },
 
   getJwtExpiry: function() {
