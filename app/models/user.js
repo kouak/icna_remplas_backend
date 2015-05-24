@@ -7,12 +7,13 @@ var ModelBase = require('./base')(myBs), // Bookshelf-base model
     Promise = require('bluebird'),
     bcrypt = Promise.promisifyAll(require('bcrypt')),
     crypto = Promise.promisifyAll(require('crypto')),
+    jwt = require('jsonwebtoken'),
 
     User;
 
 // Token constants
 // These need to be set somewhere in configuration
-var TOKEN_EXPIRY = 1000*60*60*24*7; // A week
+var TOKEN_EXPIRY_IN_SECONDS = 60*60*24*7; // A week
 var TOKEN_SECRET = 'azertyuiop';
 
 myBs.plugin('virtuals');
@@ -127,6 +128,23 @@ User = ModelBase.extend({
   },
 
 
+  // Return a signed token
+  issueToken: Promise.method(function() {
+    var self = this;
+    if(!self.get('id')) { return Promise.reject(new Error('can\'t issue a token for a non-saved user')); }
+
+    var payload = {
+      userId: self.get('id')
+    };
+
+    var options = {
+      expiresInSeconds: TOKEN_EXPIRY_IN_SECONDS
+    };
+
+    return jwt.sign(payload, TOKEN_SECRET, options); 
+  }),
+
+  // Change password
   changePassword: Promise.method(function(oldPassword, newPassword) {
     var self = this;
     
@@ -236,7 +254,7 @@ User = ModelBase.extend({
   },
 
   getJwtExpiry: function() {
-    return new Date(Date.now() + TOKEN_EXPIRY);
+    return new Date(Date.now() + TOKEN_EXPIRY_IN_SECONDS*1000);
   }
 
 });

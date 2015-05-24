@@ -7,6 +7,7 @@ var knex = initDb.knex;
 var User = require(appSettings.ROOTDIR + '/app/models/user');
 var Team = require(appSettings.ROOTDIR + '/app/models/team');
 
+var jwt = require('jsonwebtoken');
 var Promise = require('bluebird');
 
 var validUser = {
@@ -56,14 +57,19 @@ describe('User login token', function() {
       ];
     });
 
+    it('should not issue a token for a non existant user', function() {
+      return User.forge(validUser).issueToken().should.be.rejectedWith(/non-saved user/);
+    });
+
   });
 
   describe('given an user in db', function() {
+    var savedUser;
     beforeEach(function(done) {
       Promise.try(function() {
         return User.forge(validUser).save();
       })
-      .then(function() { done(); });
+      .then(function(user) { savedUser = user; done(); });
     });
 
     afterEach(function(done) {
@@ -72,9 +78,26 @@ describe('User login token', function() {
       }).then(function() { done(); });
     });
 
-    it('should create a valid token', function() {
-      return Promise.try(function() {
-        return true;
+    it('should create a token', function() {
+      return savedUser.issueToken().should.be.fulfilled;
+    });
+
+    it('should create a signed token', function() {
+      return savedUser.issueToken().then(function(token) {
+        return [
+          (function() { jwt.verify(token, 'INVALID') }).should.throw(/invalid/),
+          (function() { jwt.verify(token, User.getJwtSecret()) }).should.not.throw
+        ];
+      });
+    });
+
+    it('should embed userId in payload', function() {
+      return savedUser.issueToken().then(function(token) {
+        var t = jwt.verify(token, User.getJwtSecret());
+        return [
+          t.should.have.property('userId'),
+          t.userId.should.eql(savedUser.get('id'))
+        ];
       });
     });
   });
