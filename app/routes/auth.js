@@ -22,6 +22,12 @@ routes = function() {
   // Update user password by token
   router.post('/reset/password', c.auth.resetPassword);
 
+  // Login
+  router.post('/login', c.auth.login);
+
+  // Refresh token
+  router.post('/refresh', c.auth.refreshToken);
+
   return router;
 };
 
