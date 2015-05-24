@@ -93,7 +93,7 @@ describe('User login token', function() {
 
     it('should embed userId in payload', function() {
       return savedUser.issueToken().then(function(token) {
-        var t = jwt.verify(token, User.getJwtSecret());
+        var t = User.checkTokenValidity(token);
         return [
           t.should.have.property('userId'),
           t.userId.should.eql(savedUser.get('id'))

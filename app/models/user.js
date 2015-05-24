@@ -253,6 +253,12 @@ User = ModelBase.extend({
     return TOKEN_SECRET;
   },
 
+  checkTokenValidity: function(token) {
+    var self = this;
+    if(!token) { throw new Error('must pass a token') }
+    return jwt.verify(token, self.getJwtSecret());
+  },
+
   getJwtExpiry: function() {
     return new Date(Date.now() + TOKEN_EXPIRY_IN_SECONDS*1000);
   }
