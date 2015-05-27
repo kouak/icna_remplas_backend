@@ -196,7 +196,7 @@ User = ModelBase.extend({
   requestResetToken: function(options) {
     var self = this;
     var options = _.extend({}, options);
-    // Not email supplied, throw error
+    // No email supplied, throw error
     if(options.email === undefined) { return Promise.reject(new Error('Please supply a valid email')); }
 
     // Find user with supplied email
@@ -218,6 +218,11 @@ User = ModelBase.extend({
 
       // Return save promise
       return this.user.save();
+    })
+    .then(function() {
+      // send email here
+      console.log('Sending reset email to ', this.user.get('email'), ' token is ', this.user.get('resetPasswordToken'));
+      return Promise.resolve(this.user); // User is saved, return a resolved promise containing our user
     });
   },
 
