@@ -25,6 +25,8 @@ User = ModelBase.extend({
     ModelBase.prototype.initialize.call(this); // Call ModelBase initialize
     // Encrypt Password
     this.on('creating', this.encryptPassword);
+    // Send confirmation email
+    this.on('created', this.sendConfirmationEmail);
     // Validate existence of team parent
     this.on('saving', this.validateTeamAssociation);
     // Validate uniqueness of email
@@ -127,6 +129,14 @@ User = ModelBase.extend({
     });
   },
 
+
+  sendConfirmationEmail: function() {
+    var self = this;
+    if(!self.isNew) { return Promise.reject(new Error('should never happen')); }
+    console.log('Registering new user with email ', self.get('email'));
+
+    return Promise.resolve(self);
+  },
 
   // Return a signed token
   issueToken: Promise.method(function(expirationInSeconds) {
