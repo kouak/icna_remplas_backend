@@ -134,7 +134,10 @@ User = ModelBase.extend({
     if(!self.get('id')) { return Promise.reject(new Error('can\'t issue a token for a non-saved user')); }
 
     var payload = {
-      userId: self.get('id')
+      userId: self.get('id'),
+      firstName: self.get('firstName'),
+      name: self.get('name'),
+      team: self.related('team')
     };
 
     var options = {

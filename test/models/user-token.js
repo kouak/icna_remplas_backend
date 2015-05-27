@@ -100,12 +100,18 @@ describe('User login token', function() {
       });
     });
 
-    it('should embed userId in payload', function() {
+    it('should embed data in payload', function() {
       return savedUser.issueToken().then(function(token) {
         var t = User.checkTokenValidity(token);
         return [
           t.should.have.property('userId'),
-          t.userId.should.eql(savedUser.get('id'))
+          t.userId.should.eql(savedUser.get('id')),
+          t.should.have.property('team'),
+          t.team.id.should.eql(savedUser.related('team').get('id')),
+          t.should.have.property('firstName'),
+          t.firstName.should.eql(savedUser.get('firstName')),
+          t.should.have.property('name'),
+          t.name.should.eql(savedUser.get('name'))
         ];
       });
     });
